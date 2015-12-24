@@ -2,6 +2,7 @@
 STR=0;CON=1;DEX=2;INT=3;WIS=4;CHA=5
 FORT=0;REF=1;WILL=2
 BARB=0;MONK=1;PALA=2;RANG=3;ROGU=4;SAGE=5;SHAM=6;TACT=7
+SKILROGU=0;BABROGU=1
 
 def statBonus(stat):
 	return int((stat-10)/2)
@@ -30,22 +31,36 @@ class character:
 		else: return save + int(s.level*(2/3)+2)
 	def damage(s):
 		return statBonus(s.stats[s.kom]) + int(statBonus(s.stats[STR])/2)
+	
+	def show(s):
+		print("hp "+str(c.hp())+", damage reduction "+str(c.damagereduction()))
+		print("ac "+str(c.ac()))
+		print("damage 1d6+"+str(c.damage()))
+		print("fort "+str(c.save(FORT))+" ref "+str(c.save(REF))+" will "+str(c.save(WILL)))
+
+	def setclass(s,clas,savechoice=-1,roguechoice=-1): 
+		if (clas == MONK or clas == SAGE or clas == ROGU) and savechoice not in [FORT, REF, WILL]:
+			raise Exception("bad arguments")
+		if clas == ROGU and (savechoice == REF or roguechoice not in [SKILROGU, BABROGU]): 
+			raise Exception("bad arguments")
 		
-	def setclass(s,clas):
 		if clas == BARB or clas == PALA or clas == RANG: s.classhp = 10
 		else: s.classhp = 8
+		
 		if clas == SAGE or clas == SHAM or clas == TACT: s.goodbab = False
+		elif clas == ROGU and roguechoice == SKILROGU: s.goodbab = False
 		else: s.goodbab = True
-		#rogue's choice
-		if clas == BARB or clas == PALA or clas == SHAM: s.badsave = REF
-		elif clas == RANG: s.badsave = WILL
+		
+		if clas == RANG: s.badsave = WILL
 		elif clas == TACT: s.badsave = FORT
-		# monk's, rogue's, sage's choice
+		elif clas == MONK or clas == ROGU or clas == SAGE: s.badsave = savechoice
+		else: s.badsave = REF
 	
 c = character()
-c.stats = [16,14,14,12,10,10]
+c.stats = [16,14,14,10,12,10]
 c.setclass(BARB)
-print("hp "+str(c.hp())+", damage reduction "+str(c.damagereduction()))
-print("ac "+str(c.ac()))
-print("damage 1d6+"+str(c.damage()))
-print("fort "+str(c.save(FORT))+" ref "+str(c.save(REF))+" will "+str(c.save(WILL)))
+c.show()
+
+c.setclass(ROGU,WILL,BABROGU)
+c.show()
+
