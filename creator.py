@@ -55,9 +55,20 @@ class character:
 		elif clas == TACT: s.badsave = FORT
 		elif clas == MONK or clas == ROGU or clas == SAGE: s.badsave = savechoice
 		else: s.badsave = REF
-	
+		
+		if clas == MONK or clas == SHAM: s.kom = WIS
+		elif clas == RANG: s.kom == DEX
+		elif clas == TACT: s.kom == INT
+		# Sage's choice, Rogue's choice
+		else: s.kom = STR
+		
+		if clas == PALA or clas == SHAM: s.kdm = CHA
+		elif clas == RANG: s.kdm == INT
+		# Sage's choice, Rogue's choice
+		else: s.kdm = CON
+
 c = character()
-c.stats = [16,14,14,10,12,10]
+c.stats = [16,14,14,12,10,10]
 c.setclass(BARB)
 c.show()
 
