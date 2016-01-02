@@ -43,7 +43,7 @@ class character:
 	
 	def save(s, frw):
 		save = max(s.bonus(2*frw),s.bonus(2*frw+1))
-		if race == HAL and frw == WILL: save += 1;
+		if s.race == HAL and frw == WILL: save += 1;
 		if s.badsave == frw: return save + int(s.level/2)
 		else: return save + int(s.level*(2/3)+2)
 		
@@ -53,7 +53,7 @@ class character:
 	def damage(s):
 		return s.bonus(s.kom) + int(s.bonus(STR)/2)
 	
-	def getSkill(s,skill):
+	def getskill(s,skill):
 		total = 0
 		if skill in [ACRO,LARC,STEA,RIDE]: total += s.bonus(DEX)
 		elif skill == VIGO: total += s.bonus(CON)
@@ -62,10 +62,11 @@ class character:
 		elif skill in [BLUF,DIPL,INTI]: total += s.bonus(CHA)
 		elif skill == PERC: total += s.bonus(WIS)
 		if skill in s.trained: total += s.level
-		if s.race == DWA and skill == ENGI: int(math.ceil(s.level/8.0))
-		elif s.race == ELF and skill == NATU: int(math.ceil(s.level/8.0))
-		elif s.race == GNO and skill == DIPL: int(math.ceil(s.level/8.0))
-		elif s.race == ORC and skill == ATHL: int(math.ceil(s.level/8.0))
+		if s.race == DWA and skill == ENGI: total += int(math.ceil(s.level/8.0))
+		elif s.race == ELF and skill == NATU: total += int(math.ceil(s.level/8.0))
+		elif s.race == GNO and skill == DIPL: total += int(math.ceil(s.level/8.0))
+		elif s.race == ORC and skill == ATHL: total += int(math.ceil(s.level/8.0))
+		return total
 		# TODO human's skill bonus
 		
 	def show(s):
@@ -73,6 +74,9 @@ class character:
 		print("ac "+str(c.ac()))
 		print("damage 1d6+"+str(c.damage()))
 		print("fort "+str(c.save(FORT))+" ref "+str(c.save(REF))+" will "+str(c.save(WILL)))
+	
+	def setlevel(s,level):
+		s.level = level;
 	
 	def setclass(s,clas,choiceone=None,choicetwo=None):
 		#choiceone is for rogue's save. choicetwo is for rogue's bab or skills.
@@ -136,17 +140,17 @@ class character:
 		
 		# also racial skill bonuses
 		
-	def setSkills(skills):
+	def setskills(s,skills):
 		skills = set(skills)
-		if (clas == BARB or clas == PALA) and len(skills) != 5:
+		if (s.clas == BARB or s.clas == PALA) and len(skills) != 5:
 			raise Exception("bad arguments")
-		if (clas == MONK or clas == RANG or clas == SAGE or clas == SHAM) and len(skills) != 6:
+		if (s.clas == MONK or s.clas == RANG or s.clas == SAGE or s.clas == SHAM) and len(skills) != 6:
 			raise Exception("bad arguments")
-		if clas == TACT and len(skills) != 9 and not set([ARCA,ENGI,GEOG,HIST,MEDI,NATU]).issubset(skills):
+		if s.clas == TACT and len(skills) != 9 and not set([ARCA,ENGI,GEOG,HIST,MEDI,NATU]).issubset(skills):
 			raise Exception("bad arguments")
-		if clas == ROGU and skillorbab == SKILROGU and len(skills) != 8:
+		if s.clas == ROGU and skillorbab == SKILROGU and len(skills) != 8:
 			raise Exception("bad arguments")
-		if clas == ROGU and skillorbab == BABROGU and len(skills) != 6:
+		if s.clas == ROGU and skillorbab == BABROGU and len(skills) != 6:
 			raise Exception("bad arguments")
 			
 		s.trained = skills
@@ -161,6 +165,7 @@ class Tests(unittest.TestCase):
 	def setUp(s):
 		global c 
 		c = character()
+		c.setlevel(1)
 		c.stats = [16,14,14,12,10,10]
 
 	def testmonk(s):
@@ -172,10 +177,13 @@ class Tests(unittest.TestCase):
 		
 	def testpaladin(s):
 		c.setclass(PALA)
-		s.assertEqual(c.hp(), (10+0)*2); s.assertEqual(c.damagereduction(), int(2/2))
-		s.assertEqual(c.ac(), 10+0+1)
-		s.assertEqual(c.save(FORT), 2+3); s.assertEqual(c.save(REF), 0+2); s.assertEqual(c.save(WILL), 2+0)
-		s.assertEqual(c.damage(), 3+int(3/2))
+		c.setrace(ORC)
+		c.setskills([ATHL,PERC,INTI,ACRO,LARC])
+		s.assertEqual(c.hp(), (10-1)*2); s.assertEqual(c.damagereduction(), int(2/2))
+		s.assertEqual(c.ac(), 10-1+1)
+		s.assertEqual(c.save(FORT), 2+4); s.assertEqual(c.save(REF), 0+2); s.assertEqual(c.save(WILL), 2+0)
+		s.assertEqual(c.damage(), 4+int(4/2))
+		s.assertEqual(c.getskill(ATHL), 4+1+1)
 
 if __name__ == '__main__':
 	unittest.main()
