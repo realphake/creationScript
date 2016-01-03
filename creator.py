@@ -70,10 +70,21 @@ class character:
 		# TODO human's skill bonus
 		
 	def show(s):
-		print("hp "+str(c.hp())+", damage reduction "+str(c.damagereduction()))
-		print("ac "+str(c.ac()))
-		print("damage 1d6+"+str(c.damage()))
-		print("fort "+str(c.save(FORT))+" ref "+str(c.save(REF))+" will "+str(c.save(WILL)))
+		print("strength "+str(s.stats[STR])+" (+"+str(s.bonus(STR))+")")
+		print("constitution "+str(s.stats[CON])+" (+"+str(s.bonus(CON))+")")
+		print("dexterity "+str(s.stats[DEX])+" (+"+str(s.bonus(DEX))+")")
+		print("intelligence "+str(s.stats[INT])+" (+"+str(s.bonus(INT))+")")
+		print("wisdom "+str(s.stats[WIS])+" (+"+str(s.bonus(WIS))+")")
+		print("charisma "+str(s.stats[CHA])+" (+"+str(s.bonus(CHA))+")")
+		print("hp "+str(s.hp())+", damage reduction "+str(s.damagereduction()))
+		print("ac "+str(s.ac()))
+		print("attack +"+str(s.attackbonus()) + ", damage 1d6+"+str(s.damage()))
+		print("fort "+str(s.save(FORT))+" ref "+str(s.save(REF))+" will "+str(s.save(WILL)))
+		print("acrobatics "+str(s.getskill(ACRO))+", athletics "+str(s.getskill(ATHL))+", larceny "+str(s.getskill(LARC)))
+		print("stealth "+str(s.getskill(STEA))+", ride "+str(s.getskill(RIDE))+", vigor "+str(s.getskill(VIGO)))
+		print("arcana "+str(s.getskill(ARCA))+", engineering "+str(s.getskill(ENGI))+", geography "+str(s.getskill(GEOG)))
+		print("history "+str(s.getskill(HIST))+", medicine "+str(s.getskill(MEDI))+", nature "+str(s.getskill(NATU)))
+		print("bluff "+str(s.getskill(BLUF))+", diplomacy "+str(s.getskill(DIPL))+", intimidate "+str(s.getskill(INTI))+", perception "+str(s.getskill(PERC)))
 	
 	def setlevel(s,level):
 		s.level = level;
@@ -108,13 +119,13 @@ class character:
 		elif clas == TACT: s.kom = INT
 		elif clas == SAGE: s.kom = choiceone
 		elif clas == PALA: s.kom = STR
-		else: s.kom = None
+		else: s.kom = None # Rogue and Barbarian's kom are set later
 		
 		if clas == PALA or clas == SHAM: s.kdm = CHA
 		elif clas == RANG: s.kdm = INT
 		elif clas == SAGE: s.kdm = choicetwo
 		elif clas == BARB or clas == MONK or clas == TACT: s.kdm = CON
-		else: s.kdm = None
+		else: s.kdm = None # Rogue's kdm is set later
 		
 	def setrace(s,race, choiceone=None):
 		if race == ELF and choiceone not in [INT,WIS,CHA]:
@@ -156,9 +167,12 @@ class character:
 		s.trained = skills
 
 c = character()
+c.setlevel(1)
 c.stats = [16,14,14,12,10,10]
 c.setrace(HUM, STR)
-c.setclass(BARB)
+c.setclass(SHAM)
+c.setskills([ATHL,PERC,INTI,ACRO,LARC,ARCA])
+c.show()
 
 class Tests(unittest.TestCase):
 
