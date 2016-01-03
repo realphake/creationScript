@@ -31,24 +31,31 @@ class character:
 	
 	def bonus(s, stat):
 		return statBonus(s.stats[stat])
+		
+	def getmove(s):
+		if s.race == GNO: return 25; # plus increases per level
+		else: return 30; # plus increases per level
 	
 	def hp(s):
 		return (s.classhp+s.bonus(s.kdm)) * (s.level+1)
 	
 	def ac(s):
-		return 10 + s.bab() + s.bonus(s.kdm)
+		return 10 + s.bab() + s.bonus(s.kdm) + (1 if s.small() else 0)
+	
+	def small(s):
+		return (s.race == HAL or s.race == GNO)
 	
 	def damagereduction(s):
 		return int(s.bonus(CON)/2)
 	
-	def save(s, frw):
-		save = max(s.bonus(2*frw),s.bonus(2*frw+1))
+	def save(s, frw, vscombatmaneuver=False):
+		save = max(s.bonus(2*frw),s.bonus(2*frw+1)) - (2 if s.small() else 0)
 		if s.race == HAL and frw == WILL: save += 1;
 		if s.badsave == frw: return save + int(s.level/2)
 		else: return save + int(s.level*(2/3)+2)
-		
+			
 	def attackbonus(s):
-		return s.bab() + s.bonus(s.kom)
+		return s.bab() + s.bonus(s.kom) + (1 if s.small() else 0)
 	
 	def damage(s):
 		return s.bonus(s.kom) + int(s.bonus(STR)/2)
@@ -182,14 +189,14 @@ class Tests(unittest.TestCase):
 		c.setlevel(1)
 		c.stats = [16,14,14,12,10,10]
 
-	def testmonk(s):
+	def monk(s):
 		c.setclass(MONK,FORT)
 		s.assertEqual(c.hp(), (8+2)*2); s.assertEqual(c.damagereduction(), int(2/2))
 		s.assertEqual(c.ac(), 10+2+1)
 		s.assertEqual(c.save(FORT), 0+3); s.assertEqual(c.save(REF), 2+2); s.assertEqual(c.save(WILL), 2+0)
 		s.assertEqual(c.damage(), 0+int(3/2))
 		
-	def testpaladin(s):
+	def orcpaladin(s):
 		c.setclass(PALA)
 		c.setrace(ORC)
 		c.setskills([ATHL,PERC,INTI,ACRO,LARC])
@@ -198,6 +205,8 @@ class Tests(unittest.TestCase):
 		s.assertEqual(c.save(FORT), 2+4); s.assertEqual(c.save(REF), 0+2); s.assertEqual(c.save(WILL), 2+0)
 		s.assertEqual(c.damage(), 4+int(4/2))
 		s.assertEqual(c.getskill(ATHL), 4+1+1)
+	
+	
 
 if __name__ == '__main__':
 	unittest.main()
