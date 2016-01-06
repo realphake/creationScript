@@ -3,7 +3,7 @@ import unittest
 import math
 
 STR=0;CON=1;DEX=2;INT=3;WIS=4;CHA=5
-FORT=0;REF=1;WILL=2
+FORT=0;REF=1;WILL=2; AT=3;AC=4
 BARB=0;MONK=1;PALA=2;RANG=3;ROGU=4;SAGE=5;SHAM=6;TACT=7
 SKILROGU=0;BABROGU=1
 DWA=0;ELF=1;GNO=2;HAL=3;HUM=4;ORC=5;
@@ -24,6 +24,7 @@ class character:
 	badsave = None
 	trained = None
 	skillorbab = None
+	humanbonus = None
 	
 	def bab(s):
 		if s.goodbab: return s.level
@@ -33,14 +34,14 @@ class character:
 		return statBonus(s.stats[stat])
 		
 	def getmove(s):
-		if s.race == GNO: return 25; # plus increases per level
-		else: return 30; # plus increases per level
+		if s.race == GNO: return 25; # TODO plus increases per level
+		else: return 30; # TODO plus increases per level
 	
 	def hp(s):
 		return (s.classhp+s.bonus(s.kdm)) * (s.level+1)
 	
 	def ac(s):
-		return 10 + s.bab() + s.bonus(s.kdm) + (1 if s.small() else 0)
+		return 10 + s.bab() + s.bonus(s.kdm) + (1 if s.small() else 0) + (1 if s.humanbonus == AC else 0)
 	
 	def small(s):
 		return (s.race == HAL or s.race == GNO)
@@ -50,12 +51,13 @@ class character:
 	
 	def save(s, frw, vscombatmaneuver=False):
 		save = max(s.bonus(2*frw),s.bonus(2*frw+1)) - (2 if s.small() else 0)
-		if s.race == HAL and frw == WILL: save += 1;
+		if s.race == HAL and frw == WILL: save += 1
+		if s.humanbonus == frw: save += 1
 		if s.badsave == frw: return save + int(s.level/2)
-		else: return save + int(s.level*(2/3)+2)
+		else: return save + int(s.level*(2/3)+2) 
 			
 	def attackbonus(s):
-		return s.bab() + s.bonus(s.kom) + (1 if s.small() else 0)
+		return s.bab() + s.bonus(s.kom) + (1 if s.small() else 0) + (1 if s.humanbonus == AT else 0)
 	
 	def damage(s):
 		return s.bonus(s.kom) + int(s.bonus(STR)/2)
@@ -134,29 +136,24 @@ class character:
 		elif clas == BARB or clas == MONK or clas == TACT: s.kdm = CON
 		else: s.kdm = None # Rogue's kdm is set later
 		
-	def setrace(s,race, choiceone=None):
+	def setrace(s,race, choiceone=None, choicetwo=None):
 		if race == ELF and choiceone not in [INT,WIS,CHA]:
 			raise Exception("bad arguments")
 		if race == HUM and choiceone not in [STR,CON,DEX,INT,WIS,CHA]:
 			raise Exception("bad arguments")
-		
+		if race == HUM and choicetwo not in [FORT,REF,WILL,AT,AC]:
+			raise Exception("bad arguments")
+
 		s.race = race
 		
 		if race == DWA: s.stats[CON] += 2; s.stats[INT] += 2; s.stats[CHA] -= 2
 		elif race == ELF: s.stats[DEX] += 2; s.stats[choiceone] += 2; s.stats[CON] -= 2
 		elif race == GNO: s.stats[CON] += 2; s.stats[CHA] += 2; s.stats[STR] -= 2
 		elif race == HAL: s.stats[DEX] += 2
-		elif race == HUM: s.stats[choiceone] += 2
+		elif race == HUM: 
+			s.stats[choiceone] += 2 
+			s.humanbonus = choicetwo
 		elif race == ORC: s.stats[STR] += 2; s.stats[CON] += 2; s.stats[CHA] -= 2
-		
-		#	dwa + con int - cha
-		#	elf + dex mental - con
-		#gno + con cha - str / small
-		#hal + dex / small / +1 will / move 30
-		#hum + any / +1 att, ac, or save
-		#	orc + str con - cha
-		
-		# also racial skill bonuses
 		
 	def setskills(s,skills):
 		skills = set(skills)
@@ -176,7 +173,7 @@ class character:
 c = character()
 c.setlevel(1)
 c.stats = [16,14,14,12,10,10]
-c.setrace(HUM, STR)
+c.setrace(HUM, STR, AC)
 c.setclass(SHAM)
 c.setskills([ATHL,PERC,INTI,ACRO,LARC,ARCA])
 c.show()
