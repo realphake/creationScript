@@ -3,11 +3,23 @@ import unittest
 import math
 
 STR=0;CON=1;DEX=2;INT=3;WIS=4;CHA=5
-FORT=0;REF=1;WILL=2; AT=3;AC=4
-BARB=0;MONK=1;PALA=2;RANG=3;ROGU=4;SAGE=5;SHAM=6;TACT=7
+
+FORT=0;REF=1;WILL=2; 
+AT=3;AC=4
+
 SKILROGU=0;BABROGU=1
+
+BARB=0;MONK=1;PALA=2;RANG=3;ROGU=4;SAGE=5;SHAM=6;TACT=7
+
 DWA=0;ELF=1;GNO=2;HAL=3;HUM=4;ORC=5;
-ACRO=0;ATHL=1;LARC=2;STEA=3;RIDE=4;VIGO=5;ARCA=6;ENGI=7;GEOG=8;HIST=9;MEDI=10;NATU=11;BLUF=12;DIPL=13;INTI=14;PERC=15;
+
+CELES=10;DEMON=11;DRAGO=12;SENTCON=13;
+GHOU=14;LICH=15;MUMM=16;SKEL=17;VAMP=18;
+UTTBRU=19
+
+ACRO=0;ATHL=1;LARC=2;STEA=3;RIDE=4;VIGO=5;
+ARCA=6;ENGI=7;GEOG=8;HIST=9;MEDI=10;NATU=11;
+BLUF=12;DIPL=13;INTI=14;PERC=15;
 
 def statBonus(stat):
 	return int((stat-10)/2)
@@ -71,10 +83,11 @@ class character:
 		elif skill in [BLUF,DIPL,INTI]: total += s.getbonus(CHA)
 		elif skill == PERC: total += s.getbonus(WIS)
 		if skill in s.trained: total += s.level
-		if s.race == DWA and skill == ENGI: total += int(math.ceil(s.level/8.0))
-		elif s.race == ELF and skill == NATU: total += int(math.ceil(s.level/8.0))
-		elif s.race == GNO and skill == DIPL: total += int(math.ceil(s.level/8.0))
-		elif s.race == ORC and skill == ATHL: total += int(math.ceil(s.level/8.0))
+		if s.race == DWA and skill == ENGI: total += 1+int(math.floor(s.level/8.0))
+		elif s.race == ELF and skill == NATU: total += 1+int(math.floor(s.level/8.0))
+		elif s.race == GNO and skill == DIPL: total += 1+int(math.floor(s.level/8.0))
+		elif s.race == ORC and skill == ATHL: total += 1+int(math.floor(s.level/8.0))
+		elif s.race == LICH and skill == ARCA: total += 1+int(math.floor(s.level/8.0))
 		return total
 		# TODO human's skill bonus
 		
@@ -107,11 +120,14 @@ class character:
 			raise Exception("bad arguments")
 		if clas == SAGE and (choiceone not in [INT,WIS,CHA] or choicetwo not in [STR,CON,DEX]): 
 			raise Exception("bad arguments")
+		if clas == SKEL and choiceone not in [DEX,INT]: 
+			raise Exception("bad arguments")
 		
 		s.clas = clas
 		if clas == ROGU: s.skillorbab = choicetwo
 		
 		if clas == BARB or clas == PALA or clas == RANG: s.classhp = 10
+		elif clas == GHOU or clas == LICH or clas == MUMM or clas == SKEL or clas == VAMP: s.classhp = 10
 		else: s.classhp = 8
 		
 		if clas == SAGE or clas == SHAM or clas == TACT: s.goodbab = False
@@ -121,19 +137,22 @@ class character:
 		if clas == RANG: s.badsave = WILL
 		elif clas == TACT: s.badsave = FORT
 		elif clas == MONK or clas == ROGU or clas == SAGE: s.badsave = choiceone
+		elif clas == GHOU or clas == LICH or clas == MUMM or clas == SKEL or clas == VAMP: s.badsave = REF
 		else: s.badsave = REF
 		
 		if clas == MONK or clas == SHAM: s.kom = WIS
-		elif clas == RANG: s.kom = DEX
-		elif clas == TACT: s.kom = INT
+		elif clas == RANG or clas == VAMP: s.kom = DEX
+		elif clas == TACT or clas == LICH: s.kom = INT
 		elif clas == SAGE: s.kom = choiceone
-		elif clas == PALA: s.kom = STR
+		elif clas == PALA or clas == GHOU or clas == MUMM or clas == SKEL: s.kom = STR
 		else: s.kom = None # Rogue and Barbarian's kom are set later
 		
-		if clas == PALA or clas == SHAM: s.kdm = CHA
+		if clas == PALA or clas == SHAM or clas == MUMM or clas == VAMP: s.kdm = CHA
 		elif clas == RANG: s.kdm = INT
 		elif clas == SAGE: s.kdm = choicetwo
-		elif clas == BARB or clas == MONK or clas == TACT: s.kdm = CON
+		elif clas == BARB or clas == MONK or clas == TACT or clas == GHOU: s.kdm = CON
+		elif clas == LICH: s.kdm = WIS
+		elif clas == SKEL: s.kdm = choiceone
 		else: s.kdm = None # Rogue's kdm is set later
 		
 	def setrace(s,race, choiceone=None, choicetwo=None):
@@ -142,6 +161,12 @@ class character:
 		if race == HUM and choiceone not in [STR,CON,DEX,INT,WIS,CHA]:
 			raise Exception("bad arguments")
 		if race == HUM and choicetwo not in [FORT,REF,WILL,AT,AC]:
+			raise Exception("bad arguments")
+		if race == LICH and choiceone not in [INT,WIS]:
+			raise Exception("bad arguments")
+		if race == SKEL and choiceone not in [STR,CON,DEX]:
+			raise Exception("bad arguments")
+		if race == VAMP and choiceone not in [STR,CON,DEX,INT,WIS,CHA]:
 			raise Exception("bad arguments")
 
 		s.race = race
@@ -154,6 +179,11 @@ class character:
 			s.stats[choiceone] += 2 
 			s.humanbonus = choicetwo
 		elif race == ORC: s.stats[STR] += 2; s.stats[CON] += 2; s.stats[CHA] -= 2
+		elif race == GHOU: s.stats[STR] += 2; s.stats[CON] += 2; s.stats[WIS] -= 2
+		elif race == LICH: s.stats[choiceone] += 2
+		elif race == MUMM: s.stats[CHA] += 2
+		elif race == SKEL: s.stats[choiceone] += 2
+		elif race == VAMP: s.stats[choiceone] += 2
 		
 	def setskills(s,skills):
 		skills = set(skills)
@@ -173,8 +203,8 @@ class character:
 c = character()
 c.setlevel(1)
 c.stats = [16,14,14,12,10,10]
-c.setrace(HUM, STR, AC)
-c.setclass(SHAM)
+#c.setrace(HUM, STR, AC)
+#c.setclass(SHAM)
 c.setskills([ATHL,PERC,INTI,ACRO,LARC,ARCA])
 c.show()
 
