@@ -21,6 +21,19 @@ ACRO=0;ATHL=1;LARC=2;STEA=3;RIDE=4;VIGO=5;
 ARCA=6;ENGI=7;GEOG=8;HIST=9;MEDI=10;NATU=11;
 BLUF=12;DIPL=13;INTI=14;PERC=15;
 
+PathWarRage=0;PathWarDervish=1;PathDestruction=2;PathAncestors=3
+DisciplineSerpent=4;DisciplineCrane=5;DisciplineDragon=6
+JudgmentKnowing=7;BastionProtection=8;HeroicaEndings=9;SmitingWar=10;VirtueRenewal=11;
+ProfessionalSoldier=12;ReignArrows=13;IronMagi=14;BattleTempering=15;
+EsotericaRadica=16;OffensiveAssassin=17;OffensiveSwashbuckler=18;OffensiveDemoman=19;DefensiveAcrobatic=20;DefensiveNinjas=21;DefensiveFortune=22;
+WrathJustBlade=23;WrathArcaneLore=24;ForceWill=25;ArcaneSecrets=26;
+Incantation=27;ShamanSpells=28;
+TacticalInsight=29;BagOfTricks=30;TacticianSpells=31
+
+Celestial=32;Demon=33;Dragon=34;SentientConstruct=35;
+UndeadGhoul=36;UndeadLich=37;UndeadMummy=38;UndeadSkeleton=39;UndeadVampire=40;
+UtterBrute=41;
+
 def statBonus(stat):
 	return int((stat-10)/2)
 
