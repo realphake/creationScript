@@ -26,50 +26,50 @@ class character:
 	skillorbab = None
 	humanbonus = None
 	
-	def bab(s):
+	def getbab(s):
 		if s.goodbab: return s.level
 		else: return int(s.level*0.75)
 	
-	def bonus(s, stat):
+	def getbonus(s, stat):
 		return statBonus(s.stats[stat])
 		
 	def getmove(s):
 		if s.race == GNO: return 25; # TODO plus increases per level
 		else: return 30; # TODO plus increases per level
 	
-	def hp(s):
-		return (s.classhp+s.bonus(s.kdm)) * (s.level+1)
+	def gethp(s):
+		return (s.classhp+s.getbonus(s.kdm)) * (s.level+1)
 	
-	def ac(s):
-		return 10 + s.bab() + s.bonus(s.kdm) + (1 if s.small() else 0) + (1 if s.humanbonus == AC else 0)
+	def getac(s):
+		return 10 + s.getbab() + s.getbonus(s.kdm) + (1 if s.issmall() else 0) + (1 if s.humanbonus == AC else 0)
 	
-	def small(s):
+	def issmall(s):
 		return (s.race == HAL or s.race == GNO)
 	
-	def damagereduction(s):
-		return int(s.bonus(CON)/2)
+	def getdamagereduction(s):
+		return int(s.getbonus(CON)/2)
 	
-	def save(s, frw, vscombatmaneuver=False):
-		save = max(s.bonus(2*frw),s.bonus(2*frw+1)) - (2 if s.small() else 0)
+	def getsave(s, frw, vscombatmaneuver=False):
+		save = max(s.getbonus(2*frw),s.getbonus(2*frw+1)) - (2 if s.issmall() else 0)
 		if s.race == HAL and frw == WILL: save += 1
 		if s.humanbonus == frw: save += 1
 		if s.badsave == frw: return save + int(s.level/2)
 		else: return save + int(s.level*(2/3)+2) 
 			
-	def attackbonus(s):
-		return s.bab() + s.bonus(s.kom) + (1 if s.small() else 0) + (1 if s.humanbonus == AT else 0)
+	def getattackbonus(s):
+		return s.getbab() + s.getbonus(s.kom) + (1 if s.issmall() else 0) + (1 if s.humanbonus == AT else 0)
 	
-	def damage(s):
-		return s.bonus(s.kom) + int(s.bonus(STR)/2)
+	def getdamage(s):
+		return s.getbonus(s.kom) + int(s.getbonus(STR)/2)
 	
 	def getskill(s,skill):
 		total = 0
-		if skill in [ACRO,LARC,STEA,RIDE]: total += s.bonus(DEX)
-		elif skill == VIGO: total += s.bonus(CON)
-		elif skill == ATHL: total += s.bonus(STR)
-		elif skill in [ARCA,ENGI,GEOG,HIST,MEDI,NATU]: total += s.bonus(INT)
-		elif skill in [BLUF,DIPL,INTI]: total += s.bonus(CHA)
-		elif skill == PERC: total += s.bonus(WIS)
+		if skill in [ACRO,LARC,STEA,RIDE]: total += s.getbonus(DEX)
+		elif skill == VIGO: total += s.getbonus(CON)
+		elif skill == ATHL: total += s.getbonus(STR)
+		elif skill in [ARCA,ENGI,GEOG,HIST,MEDI,NATU]: total += s.getbonus(INT)
+		elif skill in [BLUF,DIPL,INTI]: total += s.getbonus(CHA)
+		elif skill == PERC: total += s.getbonus(WIS)
 		if skill in s.trained: total += s.level
 		if s.race == DWA and skill == ENGI: total += int(math.ceil(s.level/8.0))
 		elif s.race == ELF and skill == NATU: total += int(math.ceil(s.level/8.0))
@@ -79,16 +79,16 @@ class character:
 		# TODO human's skill bonus
 		
 	def show(s):
-		print("strength "+str(s.stats[STR])+" (+"+str(s.bonus(STR))+")")
-		print("constitution "+str(s.stats[CON])+" (+"+str(s.bonus(CON))+")")
-		print("dexterity "+str(s.stats[DEX])+" (+"+str(s.bonus(DEX))+")")
-		print("intelligence "+str(s.stats[INT])+" (+"+str(s.bonus(INT))+")")
-		print("wisdom "+str(s.stats[WIS])+" (+"+str(s.bonus(WIS))+")")
-		print("charisma "+str(s.stats[CHA])+" (+"+str(s.bonus(CHA))+")")
-		print("hp "+str(s.hp())+", damage reduction "+str(s.damagereduction()))
-		print("ac "+str(s.ac()))
-		print("attack +"+str(s.attackbonus()) + ", damage 1d6+"+str(s.damage()))
-		print("fort "+str(s.save(FORT))+" ref "+str(s.save(REF))+" will "+str(s.save(WILL)))
+		print("strength "+str(s.stats[STR])+" (+"+str(s.getbonus(STR))+")")
+		print("constitution "+str(s.stats[CON])+" (+"+str(s.getbonus(CON))+")")
+		print("dexterity "+str(s.stats[DEX])+" (+"+str(s.getbonus(DEX))+")")
+		print("intelligence "+str(s.stats[INT])+" (+"+str(s.getbonus(INT))+")")
+		print("wisdom "+str(s.stats[WIS])+" (+"+str(s.getbonus(WIS))+")")
+		print("charisma "+str(s.stats[CHA])+" (+"+str(s.getbonus(CHA))+")")
+		print("hp "+str(s.gethp())+", damage reduction "+str(s.getdamagereduction()))
+		print("ac "+str(s.getac()))
+		print("attack +"+str(s.getattackbonus()) + ", damage 1d6+"+str(s.getdamage()))
+		print("fort "+str(s.getsave(FORT))+" ref "+str(s.getsave(REF))+" will "+str(s.getsave(WILL)))
 		print("acrobatics "+str(s.getskill(ACRO))+", athletics "+str(s.getskill(ATHL))+", larceny "+str(s.getskill(LARC)))
 		print("stealth "+str(s.getskill(STEA))+", ride "+str(s.getskill(RIDE))+", vigor "+str(s.getskill(VIGO)))
 		print("arcana "+str(s.getskill(ARCA))+", engineering "+str(s.getskill(ENGI))+", geography "+str(s.getskill(GEOG)))
@@ -188,22 +188,20 @@ class Tests(unittest.TestCase):
 
 	def monk(s):
 		c.setclass(MONK,FORT)
-		s.assertEqual(c.hp(), (8+2)*2); s.assertEqual(c.damagereduction(), int(2/2))
-		s.assertEqual(c.ac(), 10+2+1)
-		s.assertEqual(c.save(FORT), 0+3); s.assertEqual(c.save(REF), 2+2); s.assertEqual(c.save(WILL), 2+0)
-		s.assertEqual(c.damage(), 0+int(3/2))
+		s.assertEqual(c.gethp(), (8+2)*2); s.assertEqual(c.getdamagereduction(), int(2/2))
+		s.assertEqual(c.getac(), 10+2+1)
+		s.assertEqual(c.getsave(FORT), 0+3); s.assertEqual(c.getsave(REF), 2+2); s.assertEqual(c.getsave(WILL), 2+0)
+		s.assertEqual(c.getdamage(), 0+int(3/2))
 		
 	def orcpaladin(s):
 		c.setclass(PALA)
 		c.setrace(ORC)
 		c.setskills([ATHL,PERC,INTI,ACRO,LARC])
-		s.assertEqual(c.hp(), (10-1)*2); s.assertEqual(c.damagereduction(), int(2/2))
-		s.assertEqual(c.ac(), 10-1+1)
-		s.assertEqual(c.save(FORT), 2+4); s.assertEqual(c.save(REF), 0+2); s.assertEqual(c.save(WILL), 2+0)
-		s.assertEqual(c.damage(), 4+int(4/2))
-		s.assertEqual(c.getskill(ATHL), 4+1+1)
-	
-	
+		s.assertEqual(c.gethp(), (10-1)*2); s.assertEqual(c.getdamagereduction(), int(2/2))
+		s.assertEqual(c.getac(), 10-1+1)
+		s.assertEqual(c.getsave(FORT), 2+4); s.assertEqual(c.getsave(REF), 0+2); s.assertEqual(c.getsave(WILL), 2+0)
+		s.assertEqual(c.getdamage(), 4+int(4/2))
+		s.assertEqual(c.getgetskill(ATHL), 4+1+1)
 
 if __name__ == '__main__':
 	unittest.main()
