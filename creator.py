@@ -39,8 +39,12 @@ class character:
 	humanbonus = None
 	
 	def getbab(s):
-		if s.goodbab: return s.level
-		else: return int(s.level*0.75)
+		bab = 0
+		if s.goodbab: bab = s.level
+		else: bab = int(s.level*0.75)
+		babarray = [bab-5] * (int(bab/5.0)+1)
+		babarray[0] = bab
+		return babarray
 	
 	def getbonus(s, stat):
 		return statBonus(s.stats[stat])
@@ -53,7 +57,7 @@ class character:
 		return (s.classhp+s.getbonus(s.kdm)) * (s.level+1)
 	
 	def getac(s):
-		return 10 + s.getbab() + s.getbonus(s.kdm) + (1 if s.issmall() else 0) + (1 if s.humanbonus == AC else 0)
+		return 10 + s.getbab()[0] + s.getbonus(s.kdm) + (1 if s.issmall() else 0) + (1 if s.humanbonus == AC else 0)
 	
 	def issmall(s):
 		return (s.race == HAL or s.race == GNO)
@@ -66,10 +70,10 @@ class character:
 		if s.race == HAL and frw == WILL: save += 1
 		if s.humanbonus == frw: save += 1
 		if s.badsave == frw: return save + int(s.level/2)
-		else: return save + int(s.level*(2/3)+2) 
+		else: return save + int(s.level*(2.0/3.0)+2) 
 			
 	def getattackbonus(s):
-		return s.getbab() + s.getbonus(s.kom) + (1 if s.issmall() else 0) + (1 if s.humanbonus == AT else 0)
+		return [(x + s.getbonus(s.kom) + (1 if s.issmall() else 0) + (1 if s.humanbonus == AT else 0)) for x in s.getbab()] 
 	
 	def getdamage(s):
 		return s.getbonus(s.kom) + int(s.getbonus(STR)/2)
@@ -201,11 +205,11 @@ class character:
 		s.trained = skills
 
 c = character()
-c.setlevel(1)
+c.setlevel(10)
 c.stats = [16,14,14,12,10,10]
-#c.setrace(HUM, STR, AC)
-#c.setclass(SHAM)
-c.setskills([ATHL,PERC,INTI,ACRO,LARC,ARCA])
+c.setrace(HUM, STR, AC)
+c.setclass(PALA)
+c.setskills([ATHL,PERC,ACRO,LARC,ARCA])
 c.show()
 
 class Tests(unittest.TestCase):
