@@ -21,6 +21,8 @@ ACRO=0;ATHL=1;LARC=2;STEA=3;RIDE=4;VIGO=5;
 ARCA=6;ENGI=7;GEOG=8;HIST=9;MEDI=10;NATU=11;
 BLUF=12;DIPL=13;INTI=14;PERC=15;
 
+ItemsTrack=-1
+
 PathWarRage=0;PathWarDervish=1;PathDestruction=2;PathAncestors=3
 DisciplineSerpent=4;DisciplineCrane=5;DisciplineDragon=6
 JudgmentKnowing=7;BastionProtection=8;HeroicaEndings=9;SmitingWar=10;VirtueRenewal=11;
@@ -202,6 +204,16 @@ class character:
 		elif race == SKEL: s.stats[choiceone] += 2
 		elif race == VAMP: s.stats[choiceone] += 2
 		
+	def settracks(s,tracks):
+		for track in tracks:
+			if track == PathWarRage: s.kom = STR
+			elif track in (PathWarDervish, OffensiveAssassin, OffensiveSwashbuckler): s.kom = DEX
+			elif track == OffensiveDemoman: s.kom = INT
+			
+			if track == DefensiveAcrobatic: s.kdm = CON
+			elif track == DefensiveNinjas: s.kdm = WIS
+			elif track == DefensiveFortune: s.kdm = CHA
+
 	def setskills(s,skills):
 		skills = set(skills)
 		if (s.clas == BARB or s.clas == PALA) and len(skills) != 5:
@@ -218,11 +230,12 @@ class character:
 		s.trained = skills
 
 c = character()
-c.setlevel(10)
-c.stats = [16,14,14,12,10,10]
-c.setrace(HUM, STR, AC)
-c.setclass(PALA)
-c.setskills([ATHL,PERC,ACRO,LARC,ARCA])
+c.setlevel(1)
+c.stats = [10,14,16,12,10,14]
+c.setclass(VAMP)
+c.setrace(VAMP,DEX)
+c.setskills([ATHL,PERC,INTI,ACRO,LARC])
+c.settracks([UndeadVampire, EsotericaRadica, OffensiveAssassin,DefensiveNinjas])
 c.show()
 
 class Tests(unittest.TestCase):
@@ -233,14 +246,14 @@ class Tests(unittest.TestCase):
 		c.setlevel(1)
 		c.stats = [16,14,14,12,10,10]
 
-	def monk(s):
+	def testmonk(s):
 		c.setclass(MONK,FORT)
 		s.assertEqual(c.gethp(), (8+2)*2); s.assertEqual(c.getdamagereduction(), int(2/2))
 		s.assertEqual(c.getac(), 10+2+1)
 		s.assertEqual(c.getsave(FORT), 0+3); s.assertEqual(c.getsave(REF), 2+2); s.assertEqual(c.getsave(WILL), 2+0)
 		s.assertEqual(c.getdamage(), 0+int(3/2))
 		
-	def orcpaladin(s):
+	def testorcpaladin(s):
 		c.setclass(PALA)
 		c.setrace(ORC)
 		c.setskills([ATHL,PERC,INTI,ACRO,LARC])
@@ -248,7 +261,18 @@ class Tests(unittest.TestCase):
 		s.assertEqual(c.getac(), 10-1+1)
 		s.assertEqual(c.getsave(FORT), 2+4); s.assertEqual(c.getsave(REF), 0+2); s.assertEqual(c.getsave(WILL), 2+0)
 		s.assertEqual(c.getdamage(), 4+int(4/2))
-		s.assertEqual(c.getgetskill(ATHL), 4+1+1)
+		s.assertEqual(c.getskill(ATHL), 4+1+1)
+		
+	def testvampirerogue(s):
+		c.stats = [10,14,16,12,10,14]
+		c.setclass(VAMP)
+		c.setrace(VAMP,DEX)
+		c.setskills([ATHL,PERC,INTI,ACRO,LARC])
+		c.settracks([UndeadVampire, EsotericaRadica, OffensiveAssassin,DefensiveNinjas])
+		s.assertEqual(c.gethp(), (10+0)*2); s.assertEqual(c.getdamagereduction(), int(2/2.0))
+		s.assertEqual(c.getac(), 10+0+1)
+		s.assertEqual(c.getsave(FORT), 2+2); s.assertEqual(c.getsave(REF), 0+4); s.assertEqual(c.getsave(WILL), 2+2)
+		s.assertEqual(c.getdamage(), 4+int(0/2.0))
 
 if __name__ == '__main__':
 	unittest.main()
