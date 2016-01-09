@@ -7,6 +7,8 @@ STR=0;CON=1;DEX=2;INT=3;WIS=4;CHA=5
 FORT=0;REF=1;WILL=2; 
 AT=3;AC=4
 
+FAST=1;MEDIUM=0;SLOW=-1
+
 SKILROGU=0;BABROGU=1
 
 BARB=0;MONK=1;PALA=2;RANG=3;ROGU=4;SAGE=5;SHAM=6;TACT=7
@@ -92,6 +94,9 @@ class character:
 	
 	def getdamage(s):
 		return s.getbonus(s.kom) + int(s.getbonus(STR)/2)
+		
+	def getcircle(s,speed):
+		return int(math.ceil((s.level+speed)/3.0))
 	
 	def getskill(s,skill):
 		total = 0
@@ -230,24 +235,6 @@ class character:
 			raise Exception("You chose " +len(skills)+ " skills but you get 6")
 			
 		s.trained = skills
-
-c = character()
-c.setlevel(1)
-c.stats = [10,14,16,12,10,14]
-c.setclass(VAMP)
-c.setrace(VAMP,DEX)
-c.setskills([ATHL,PERC,INTI,ACRO,LARC])
-c.settracks([UndeadVampire, EsotericaRadica, OffensiveAssassin,DefensiveNinjas])
-c.show()
-
-c = character()
-c.setlevel(1)
-c.stats = [10,14,16,12,14,10]
-c.setclass(VAMP)
-c.setrace(VAMP,DEX)
-c.setskills([ATHL,PERC,INTI,ACRO,LARC])
-c.settracks([UndeadVampire, EsotericaRadica, OffensiveAssassin,DefensiveNinjas])
-c.show()
 
 #TODO when setting new stats, racial stats are overwritten. 
 
