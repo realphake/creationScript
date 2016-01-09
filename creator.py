@@ -133,14 +133,16 @@ class character:
 	def setclass(s,clas,choiceone=None,choicetwo=None):
 		#choiceone is for rogue's save. choicetwo is for rogue's bab or skills.
 		#choiceone is for sage's kom. choicetwo is for sage's kdm. 
-		if (clas == MONK or clas == SAGE or clas == ROGU) and choiceone not in [FORT, REF, WILL]:
-			raise Exception("bad arguments")
-		if clas == ROGU and (choiceone == REF or choicetwo not in [SKILROGU, BABROGU]): 
-			raise Exception("bad arguments")
+		if (clas == MONK or clas == SAGE) and choiceone not in [FORT, REF, WILL]:
+			raise Exception("Choose any save as your bad save")
+		if clas == ROGU and choiceone not in [FORT, WILL]:
+			raise Exception("Choose FORT or WILL as your bad save")
+		if clas == ROGU and choicetwo not in [SKILROGU, BABROGU]:
+			raise Exception("Choose between skills or base attack bonus")
 		if clas == SAGE and (choiceone not in [INT,WIS,CHA] or choicetwo not in [STR,CON,DEX]): 
-			raise Exception("bad arguments")
+			raise Exception("Choose a mental stat for KOM and a physical stat for KDM")
 		if clas == SKEL and choiceone not in [DEX,INT]: 
-			raise Exception("bad arguments")
+			raise Exception("Choose DEX or INT as KDM")
 		
 		s.clas = clas
 		if clas == ROGU: s.skillorbab = choicetwo
@@ -176,17 +178,17 @@ class character:
 		
 	def setrace(s,race, choiceone=None, choicetwo=None):
 		if race == ELF and choiceone not in [INT,WIS,CHA]:
-			raise Exception("bad arguments")
+			raise Exception("Choose INT, WIS or CHA to raise by 2")
 		if race == HUM and choiceone not in [STR,CON,DEX,INT,WIS,CHA]:
-			raise Exception("bad arguments")
+			raise Exception("Choose any one stat to raise by 2")
 		if race == HUM and choicetwo not in [FORT,REF,WILL,AT,AC]:
-			raise Exception("bad arguments")
+			raise Exception("Choose AT, AC or any save to raise by 1")
 		if race == LICH and choiceone not in [INT,WIS]:
-			raise Exception("bad arguments")
+			raise Exception("Choose INT or WIS to raise by 2")
 		if race == SKEL and choiceone not in [STR,CON,DEX]:
-			raise Exception("bad arguments")
+			raise Exception("Choose STR, CON or DEX to raise by 2")
 		if race == VAMP and choiceone not in [STR,CON,DEX,INT,WIS,CHA]:
-			raise Exception("bad arguments")
+			raise Exception("Choose any one stat to raise by 2")
 
 		s.race = race
 		
@@ -217,15 +219,15 @@ class character:
 	def setskills(s,skills):
 		skills = set(skills)
 		if (s.clas == BARB or s.clas == PALA) and len(skills) != 5:
-			raise Exception("bad arguments")
+			raise Exception("You chose " +len(skills)+ " skills but you get 5")
 		if (s.clas == MONK or s.clas == RANG or s.clas == SAGE or s.clas == SHAM) and len(skills) != 6:
-			raise Exception("bad arguments")
-		if s.clas == TACT and len(skills) != 9 and not set([ARCA,ENGI,GEOG,HIST,MEDI,NATU]).issubset(skills):
-			raise Exception("bad arguments")
+			raise Exception("You chose " +len(skills)+ " skills but you get 6")
+		if s.clas == TACT and (len(skills) != 9 or not set([ARCA,ENGI,GEOG,HIST,MEDI,NATU]).issubset(skills)):
+			raise Exception("You didn't choose 9 skills or didn't choose every knowledge skill")
 		if s.clas == ROGU and skillorbab == SKILROGU and len(skills) != 8:
-			raise Exception("bad arguments")
+			raise Exception("You chose " +len(skills)+ " skills but you get 8")
 		if s.clas == ROGU and skillorbab == BABROGU and len(skills) != 6:
-			raise Exception("bad arguments")
+			raise Exception("You chose " +len(skills)+ " skills but you get 6")
 			
 		s.trained = skills
 
@@ -237,6 +239,17 @@ c.setrace(VAMP,DEX)
 c.setskills([ATHL,PERC,INTI,ACRO,LARC])
 c.settracks([UndeadVampire, EsotericaRadica, OffensiveAssassin,DefensiveNinjas])
 c.show()
+
+c = character()
+c.setlevel(1)
+c.stats = [10,14,16,12,14,10]
+c.setclass(VAMP)
+c.setrace(VAMP,DEX)
+c.setskills([ATHL,PERC,INTI,ACRO,LARC])
+c.settracks([UndeadVampire, EsotericaRadica, OffensiveAssassin,DefensiveNinjas])
+c.show()
+
+#TODO when setting new stats, racial stats are overwritten. 
 
 class Tests(unittest.TestCase):
 
