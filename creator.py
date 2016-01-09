@@ -82,8 +82,8 @@ class character:
 	def getdamagereduction(s):
 		return int(s.getbonus(CON)/2)
 	
-	def getsave(s, frw, vscombatmaneuver=False):
-		save = max(s.getbonus(2*frw),s.getbonus(2*frw+1)) - (2 if s.issmall() else 0)
+	def getsave(s, frw, vsmaneuver=False):
+		save = max(s.getbonus(2*frw),s.getbonus(2*frw+1)) - (2 if (s.issmall() and vsmaneuver) else 0)
 		if s.race == HAL and frw == WILL: save += 1
 		if s.humanbonus == frw: save += 1
 		if s.badsave == frw: return save + int(s.level/2)
@@ -136,8 +136,6 @@ class character:
 		s.level = level;
 	
 	def setclass(s,clas,choiceone=None,choicetwo=None):
-		#choiceone is for rogue's save. choicetwo is for rogue's bab or skills.
-		#choiceone is for sage's kom. choicetwo is for sage's kdm. 
 		if (clas == MONK or clas == SAGE) and choiceone not in [FORT, REF, WILL]:
 			raise Exception("Choose any save as your bad save")
 		if clas == ROGU and choiceone not in [FORT, WILL]:
@@ -212,6 +210,9 @@ class character:
 		elif race == VAMP: s.stats[choiceone] += 2
 		
 	def settracks(s,tracks):
+		if set([PathWarRage, PathWarDervish]).issubset(tracks):
+			raise Exception("Can't choose both Rage and Dervish")
+		
 		for track in tracks:
 			if track == PathWarRage: s.kom = STR
 			elif track in (PathWarDervish, OffensiveAssassin, OffensiveSwashbuckler): s.kom = DEX
@@ -262,6 +263,18 @@ class Tests(unittest.TestCase):
 		s.assertEqual(c.getsave(FORT), 2+4); s.assertEqual(c.getsave(REF), 0+2); s.assertEqual(c.getsave(WILL), 2+0)
 		s.assertEqual(c.getdamage(), 4+int(4/2))
 		s.assertEqual(c.getskill(ATHL), 4+1+1)
+		
+	def testhalflingbarbarian(s):
+		c.setclass(BARB)
+		c.setrace(HAL)
+		c.setskills([ATHL,PERC,INTI,ACRO,LARC])
+		c.settracks([PathWarRage,PathDestruction,PathAncestors,ProfessionalSoldier])
+		s.assertEqual(c.gethp(), (10+2)*2); s.assertEqual(c.getdamagereduction(), int(2/2))
+		s.assertEqual(c.getac(), 10+2+1+1)
+		s.assertEqual(c.getsave(FORT), 3+2); 
+		s.assertEqual(c.getsave(REF), 3+0); 
+		s.assertEqual(c.getsave(WILL), 0+2+1);
+		s.assertEqual(c.getdamage(), 3+int(3/2.0))
 		
 	def testvampirerogue(s):
 		c.stats = [10,14,16,12,10,14]
