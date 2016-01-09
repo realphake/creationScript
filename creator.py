@@ -40,6 +40,12 @@ UtterBrute=41;
 
 def statBonus(stat):
 	return int((stat-10)/2)
+	
+def containsMoreThanOne(superset,subset):
+	contains=0
+	for element in subset:
+		if element in superset: contains += 1
+	return contains >= 2
 
 class character:
 	clas = None
@@ -210,8 +216,24 @@ class character:
 		elif race == VAMP: s.stats[choiceone] += 2
 		
 	def settracks(s,tracks):
+		if len(set(tracks)) != 4:
+			raise Exception("Chosen the same track multiple times? Or too few? Or too many?")
 		if set([PathWarRage, PathWarDervish]).issubset(tracks):
 			raise Exception("Can't choose both Rage and Dervish")
+		if set([ReignArrows,IronMagi]).issubset(tracks):
+			raise Exception("Can't choose both Reign of Arrows and Iron Magi")
+		if containsMoreThanOne(tracks,[OffensiveAssassin,OffensiveSwashbuckler,OffensiveDemoman]):
+			raise Exception("Must choose only one offensive rogue track")
+		if containsMoreThanOne(tracks,[DefensiveAcrobatic,DefensiveNinjas,DefensiveFortune]):
+			raise Exception("Must choose only one defensive rogue track")
+		if set([WrathJustBlade,WrathArcaneLore]).issubset(tracks):
+			raise Exception("Can't choose both Just Blade and Arcane Lore")
+		if containsMoreThanOne(tracks,[
+				Celestial,Demon,Dragon,SentientConstruct,
+				UndeadGhoul,UndeadLich,UndeadMummy,UndeadSkeleton,UndeadVampire,
+				UtterBrute,
+				]):
+			raise Exception("Cannot use more than one racial track")
 		
 		for track in tracks:
 			if track == PathWarRage: s.kom = STR
@@ -281,7 +303,7 @@ class Tests(unittest.TestCase):
 		c.setclass(VAMP)
 		c.setrace(VAMP,DEX)
 		c.setskills([ATHL,PERC,INTI,ACRO,LARC])
-		c.settracks([UndeadVampire, EsotericaRadica, OffensiveAssassin,DefensiveNinjas])
+		c.settracks([UndeadVampire,EsotericaRadica,OffensiveAssassin,DefensiveNinjas])
 		s.assertEqual(c.gethp(), (10+0)*2); s.assertEqual(c.getdamagereduction(), int(2/2.0))
 		s.assertEqual(c.getac(), 10+0+1)
 		s.assertEqual(c.getsave(FORT), 2+2); s.assertEqual(c.getsave(REF), 0+4); s.assertEqual(c.getsave(WILL), 2+2)
