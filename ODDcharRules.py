@@ -1,4 +1,5 @@
 import math
+import random
 
 STR=0;CON=1;DEX=2;INT=3;WIS=4;CHA=5;
 
@@ -46,6 +47,12 @@ class character:
 		c.stats[INT] = givenStats[INT]
 		c.stats[WIS] = givenStats[WIS]
 		c.stats[CHA] = givenStats[CHA]
+		
+	def getStats(c):
+		return c.stats;
+		
+	def setRandomStats(c):
+		c.stats = [sum([random.randint(1,6) for _ in range(3)]) for _ in range(6)]
 	
 	def setExperience(c, exp):
 		c.experience = exp;
@@ -76,7 +83,8 @@ class character:
 
 c = character("cleric")
 c.setExperience(500)
-c.setStats([10,10,10,10,10,10])
+c.setRandomStats()
 print(c.getLevel())
 print(c.getHitDice())
 print(c.getHitPoints())
+print(c.getStats())
