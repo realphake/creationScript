@@ -29,6 +29,9 @@ clericSpells = [[0],
 				[2,2,2,1],
 				[2,2,2,2,1]];
 
+def rollDice(size):
+	return random.randint(1,size)
+
 class character:
 	job = "";
 	stats = [];
@@ -87,6 +90,9 @@ class character:
 	def getAttackModifier(c, stat):
 		return c.getHitDice()+(1 if c.stats[stat] >= 13 else (-1 if c.stats[stat] <= 8 else 0));
 		
+	def getAttackRoll(c,stat):
+		return rollDice(20) + c.getAttackModifier(stat)
+		
 	def getDamageModifier(c, stat):
 		return 1 if c.stats[stat] >= 15 else (-1 if c.stats[stat] <= 6 else 0);
 		
@@ -107,7 +113,7 @@ class character:
 		print("STR: " + str(c.getStats()[STR]) + ", CON: " + str(c.getStats()[CON]) + ", DEX: " + str(c.getStats()[DEX]))
 		print("INT: " + str(c.getStats()[INT]) + ", WIS: " + str(c.getStats()[WIS]) + ", CHA: " + str(c.getStats()[CHA]))
 
-c = character("cleric")
-c.setExperience(500)
-c.setRandomStats()
-c.logCharacter()
+#c = character("cleric")
+#c.setExperience(500)
+#c.setRandomStats()
+#c.logCharacter()
