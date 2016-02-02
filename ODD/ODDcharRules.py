@@ -37,6 +37,7 @@ class character:
 	stats = [];
 
 	spellsUsed = [0,0,0,0,0,0];
+	damageTaken = 0;
 	experience = 0;
 	
 	def __init__(c, givenJob):
@@ -62,6 +63,9 @@ class character:
 		
 	def setRandomStats(c):
 		c.stats = [sum([random.randint(1,6) for _ in range(3)]) for _ in range(6)]
+		
+	def setAverageStats(c):
+		c.stats = [10,10,10,10,10,10]
 	
 	def setExperience(c, exp):
 		c.experience = exp;
@@ -98,6 +102,12 @@ class character:
 		
 	def getHitPoints(c):
 		return 6 + ((c.getHitDice() - 1) * 4) + (c.getHitDice() * c.getHPModifier())
+		
+	def getArmor(c):
+		return 10; # TODO actually calculate the armor!
+		
+	def takeDamage(c, damage):
+		c.damageTaken += damage;
 		
 	def getSpells(c):
 		if c.job == "fighter": return [];
