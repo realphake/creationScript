@@ -100,14 +100,21 @@ class character:
 	def getDamageModifier(c, stat):
 		return 1 if c.stats[stat] >= 15 else (-1 if c.stats[stat] <= 6 else 0);
 		
+	def getDamageRoll(c,stat):
+		return rollDice(6)+c.getDamageModifier(stat)
+		
 	def getHitPoints(c):
 		return 6 + ((c.getHitDice() - 1) * 4) + (c.getHitDice() * c.getHPModifier())
 		
 	def getArmor(c):
 		return 10; # TODO actually calculate the armor!
-		
+	
 	def takeDamage(c, damage):
 		c.damageTaken += damage;
+		
+	def attackedBy(c,opponent,stat):
+		if opponent.getAttackRoll(stat) > c.getArmor():
+			c.takeDamage(opponent.getDamageRoll(stat))
 		
 	def getSpells(c):
 		if c.job == "fighter": return [];

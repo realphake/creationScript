@@ -6,5 +6,6 @@ monster = char.character("fighter")
 monster.setAverageStats()
 
 if player.getAttackRoll(char.STR) > monster.getArmor():
-	monster.takeDamage(char.rollDice(6)+player.getDamageModifier(char.STR))
+	monster.attackedBy(player)
 
+monster.logCharacter()
