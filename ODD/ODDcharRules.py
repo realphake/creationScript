@@ -45,6 +45,11 @@ class character:
 	
 	def __init__(c, givenJob):
 		c.job = givenJob;
+		c.stats = [];
+		c.spellsUsed = [0,0,0,0,0,0];
+		c.damageTaken = 0;
+		c.equipment = [];
+		c.experience = 0;
 		
 	def setStats(c,givenStats):
 		c.stats = [0,0,0,0,0,0]
@@ -104,7 +109,7 @@ class character:
 	def getHitPoints(c):
 		return 6 + ((c.getHitDice() - 1) * 4) + (c.getHitDice() * c.getHPModifier())
 		
-	def giveEquipment(c,items): # this gives the same equipment to another character. Wat?
+	def giveEquipment(c,items):
 		for item in items:
 			c.equipment.append(item)
 	
