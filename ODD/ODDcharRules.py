@@ -28,6 +28,8 @@ clericSpells = [[0],
 				[2,2,1],
 				[2,2,2,1],
 				[2,2,2,2,1]];
+				
+armorPieces = ["breastplate","helmet","shield","tassets","greaves","gloves","buff coat"]
 
 def rollDice(size):
 	return random.randint(1,size)
@@ -38,6 +40,7 @@ class character:
 
 	spellsUsed = [0,0,0,0,0,0];
 	damageTaken = 0;
+	equipment = [];
 	experience = 0;
 	
 	def __init__(c, givenJob):
@@ -45,12 +48,7 @@ class character:
 		
 	def setStats(c,givenStats):
 		c.stats = [0,0,0,0,0,0]
-		c.stats[STR] = givenStats[STR]
-		c.stats[CON] = givenStats[CON]
-		c.stats[DEX] = givenStats[DEX]
-		c.stats[INT] = givenStats[INT]
-		c.stats[WIS] = givenStats[WIS]
-		c.stats[CHA] = givenStats[CHA]
+		c.stats = givenStats
 		
 	def getStats(c):
 		return c.stats;
@@ -106,11 +104,22 @@ class character:
 	def getHitPoints(c):
 		return 6 + ((c.getHitDice() - 1) * 4) + (c.getHitDice() * c.getHPModifier())
 		
+	def giveEquipment(c,items): # this gives the same equipment to another character. Wat?
+		for item in items:
+			c.equipment.append(item)
+	
 	def getArmor(c):
-		return 10; # TODO actually calculate the armor!
+		armorClass = 10;
+		for piece in armorPieces:
+			if piece in c.equipment: 
+				armorClass = armorClass + 1;
+		return armorClass;
 	
 	def takeDamage(c, damage):
 		c.damageTaken += damage;
+		
+	def getHPLeft(c):
+		return c.getHitPoints()-c.damageTaken
 		
 	def attackedBy(c,opponent,stat):
 		if opponent.getAttackRoll(stat) > c.getArmor():
@@ -123,9 +132,10 @@ class character:
 		
 	def logCharacter(c):
 		print("Level " + str(c.getLevel()) + " " + str(c.getJob()) + " (" + str(c.getExperience()) + "XP)")
-		print(str(c.getHitDice()) + " Hit Dice, Hit Points: " + str(c.getHitPoints()))
+		print(str(c.getHitDice()) + " Hit Dice, Hit Points: " + str(c.getHPLeft()) + "/" + str(c.getHitPoints()))
 		print("Melee attack: 1d20" + '%+d' % c.getAttackModifier(STR) + " >AC--> 1d6"+'%+d' % c.getDamageModifier(STR)+" damage")
 		print("Ranged attack: 1d20" + '%+d' % c.getAttackModifier(DEX) + " >AC--> 1d6"+'%+d' % c.getDamageModifier(DEX)+" damage")
+		print("Armor Class: " + str(c.getArmor()))
 		print("Spells per day: " + str(c.getSpells()) )
 		print("STR: " + str(c.getStats()[STR]) + ", CON: " + str(c.getStats()[CON]) + ", DEX: " + str(c.getStats()[DEX]))
 		print("INT: " + str(c.getStats()[INT]) + ", WIS: " + str(c.getStats()[WIS]) + ", CHA: " + str(c.getStats()[CHA]))

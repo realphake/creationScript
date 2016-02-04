@@ -2,10 +2,11 @@ import ODDcharRules as char
 
 player = char.character("fighter")
 player.setRandomStats()
+player.giveEquipment(["breastplate", "helmet"])
 monster = char.character("fighter")
 monster.setAverageStats()
 
-if player.getAttackRoll(char.STR) > monster.getArmor():
-	monster.attackedBy(player)
+monster.attackedBy(player,char.STR)
 
+player.logCharacter()
 monster.logCharacter()
