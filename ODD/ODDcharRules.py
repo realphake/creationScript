@@ -136,14 +136,14 @@ class character:
 		elif c.job == "cleric": return clericSpells[c.getLevel()];
 		
 	def logCharacter(c):
-		print("Level " + str(c.getLevel()) + " " + str(c.getJob()) + " (" + str(c.getExperience()) + "XP)")
-		print(str(c.getHitDice()) + " Hit Dice, Hit Points: " + str(c.getHPLeft()) + "/" + str(c.getHitPoints()))
-		print("Melee attack: 1d20" + '%+d' % c.getAttackModifier(STR) + " >AC--> 1d6"+'%+d' % c.getDamageModifier(STR)+" damage")
-		print("Ranged attack: 1d20" + '%+d' % c.getAttackModifier(DEX) + " >AC--> 1d6"+'%+d' % c.getDamageModifier(DEX)+" damage")
-		print("Armor Class: " + str(c.getArmor()))
-		print("Spells per day: " + str(c.getSpells()) )
-		print("STR: " + str(c.getStats()[STR]) + ", CON: " + str(c.getStats()[CON]) + ", DEX: " + str(c.getStats()[DEX]))
-		print("INT: " + str(c.getStats()[INT]) + ", WIS: " + str(c.getStats()[WIS]) + ", CHA: " + str(c.getStats()[CHA]))
+		print("Level {} {} ({} XP)".format(c.getLevel(), c.getJob(), c.getExperience()))
+		print("{} Hit Dice, Hit Points: {}/{}".format(c.getHitDice(), c.getHPLeft(), c.getHitPoints()))
+		print("Melee attack: 1d20{}>AC --> 1d6{} damage".format('%+d' % c.getAttackModifier(STR), '%+d' % c.getDamageModifier(STR)))
+		print("Ranged attack: 1d20{}>AC --> 1d6{} damage".format('%+d' % c.getAttackModifier(DEX), '%+d' % c.getDamageModifier(DEX)))
+		print("Armor Class: {}".format(c.getArmor()))
+		print("Spells per day: {}".format(c.getSpells()))
+		print("STR: {}, CON: {}, DEX: {}".format(c.getStats()[STR], c.getStats()[CON], c.getStats()[DEX]))
+		print("INT: {}, WIS: {}, CHA: {}".format(c.getStats()[INT], c.getStats()[WIS], c.getStats()[CHA]))
 
 #c = character("cleric")
 #c.setExperience(500)
