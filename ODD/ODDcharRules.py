@@ -154,8 +154,8 @@ class character:
 	def logCharacter(c):
 		print("Level {} {} ({} XP)".format(c.getLevel(), c.getJob(), c.getExperience()))
 		print("{} Hit Dice, Hit Points: {}/{}".format(c.getHitDice(), c.getHPLeft(), c.getHitPoints()))
-		print("Melee attack: 1d20{} >AC--> 1d6{} damage".format('%+d' % c.getAttackModifier(c.stats.STR), '%+d' % c.getDamageModifier(c.stats.STR)))
-		print("Ranged attack: 1d20{} >AC--> 1d6{} damage".format('%+d' % c.getAttackModifier(c.stats.DEX), '%+d' % c.getDamageModifier(c.stats.DEX)))
+		print("Melee attack: 1d20{}>AC --> 1d6{} damage".format('%+d' % c.getAttackModifier(c.stats.STR), '%+d' % c.getDamageModifier(c.stats.STR)))
+		print("Ranged attack: 1d20{}>AC --> 1d6{} damage".format('%+d' % c.getAttackModifier(c.stats.DEX), '%+d' % c.getDamageModifier(c.stats.DEX)))
 		print("Armor Class: {}".format(c.getArmor()))
 		print("Spells per day: {}".format(c.getSpells()))
 		print("STR: {}, CON: {}, DEX: {}".format(c.stats.STR, c.stats.CON, c.stats.DEX))
