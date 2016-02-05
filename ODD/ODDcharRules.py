@@ -1,8 +1,6 @@
 import math
 import random
 
-
-
 class attributes:
 	STR = 0;
 	CON = 0;
