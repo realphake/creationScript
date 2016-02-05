@@ -1,6 +1,8 @@
 import math
 import random
 
+statNames = ['STR', 'CON', 'DEX', 'INT', 'WIS', 'CHA']
+
 fighterProgression = [0,20,40,80,160,320,640,1200,2400];
 	
 wizardProgression = [0,25,50,100,200,400,800,1600,3200,6400,12000];
@@ -42,25 +44,14 @@ class character:
 	experience = 0;
 	
 	def __init__(c, givenJob, statTest = 0):
+		c.stats = {};
 		c.job = givenJob;
 		if statTest == 0:
-			c.stats = {
-				'STR': sum([random.randint(1,6) for _ in range(3)]), 
-				'CON': sum([random.randint(1,6) for _ in range(3)]), 
-				'DEX': sum([random.randint(1,6) for _ in range(3)]), 
-				'INT': sum([random.randint(1,6) for _ in range(3)]), 
-				'WIS': sum([random.randint(1,6) for _ in range(3)]), 
-				'CHA': sum([random.randint(1,6) for _ in range(3)])
-			}
+			for statName in statNames:
+				c.stats[statName] = sum([random.randint(1,6) for _ in range(3)]);
 		else:
-			c.stats = {
-				'STR': 10, 
-				'CON': 10, 
-				'DEX': 10, 
-				'INT': 10, 
-				'WIS': 10, 
-				'CHA': 10
-			}
+			for statName in statNames:
+				c.stats[statName] = 10;
 		c.spellsUsed = [0,0,0,0,0,0];
 		c.damageTaken = 0;
 		c.equipment = [];
