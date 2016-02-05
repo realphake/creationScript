@@ -1,7 +1,31 @@
 import math
 import random
 
-STR=0;CON=1;DEX=2;INT=3;WIS=4;CHA=5;
+
+
+class attributes:
+	STR = 0;
+	CON = 0;
+	DEX = 0;
+	INT = 0;
+	WIS = 0;
+	CHA = 0;
+	
+	def __init__(c, statBool = 0):
+		if statBool == 0:
+			c.STR = 10
+			c.CON = 10
+			c.DEX = 10
+			c.INT = 10
+			c.WIS = 10
+			c.CHA = 10
+		else:
+			c.STR = sum([random.randint(1,6) for _ in range(3)])
+			c.CON = sum([random.randint(1,6) for _ in range(3)])
+			c.DEX = sum([random.randint(1,6) for _ in range(3)])
+			c.INT = sum([random.randint(1,6) for _ in range(3)])
+			c.WIS = sum([random.randint(1,6) for _ in range(3)])
+			c.CHA = sum([random.randint(1,6) for _ in range(3)])
 
 fighterProgression = [0,20,40,80,160,320,640,1200,2400];
 	
@@ -36,16 +60,16 @@ def rollDice(size):
 
 class character:
 	job = "";
-	stats = [];
+	stats = attributes;
 
 	spellsUsed = [0,0,0,0,0,0];
 	damageTaken = 0;
 	equipment = [];
 	experience = 0;
 	
-	def __init__(c, givenJob):
+	def __init__(c, givenJob, random):
 		c.job = givenJob;
-		c.stats = [];
+		c.stats = attributes(random);
 		c.spellsUsed = [0,0,0,0,0,0];
 		c.damageTaken = 0;
 		c.equipment = [];
@@ -63,12 +87,6 @@ class character:
 		
 	def getExperience(c):
 		return c.experience
-		
-	def setRandomStats(c):
-		c.stats = [sum([random.randint(1,6) for _ in range(3)]) for _ in range(6)]
-		
-	def setAverageStats(c):
-		c.stats = [10,10,10,10,10,10]
 	
 	def setExperience(c, exp):
 		c.experience = exp;
@@ -92,16 +110,16 @@ class character:
 		elif c.job == "cleric": return clericHitDice[c.getLevel()-1];
 		
 	def getHPModifier(c):
-		return 1 if c.stats[CON] >= 15 else (-1 if c.stats[CON] <= 6 else 0);
+		return 1 if c.stats.CON >= 15 else (-1 if c.stats.CON <= 6 else 0);
 		
 	def getAttackModifier(c, stat):
-		return c.getHitDice()+(1 if c.stats[stat] >= 13 else (-1 if c.stats[stat] <= 8 else 0));
+		return c.getHitDice()+(1 if stat >= 13 else (-1 if stat <= 8 else 0));
 		
 	def getAttackRoll(c,stat):
 		return rollDice(20) + c.getAttackModifier(stat)
 		
 	def getDamageModifier(c, stat):
-		return 1 if c.stats[stat] >= 15 else (-1 if c.stats[stat] <= 6 else 0);
+		return 1 if stat >= 15 else (-1 if stat <= 6 else 0);
 		
 	def getDamageRoll(c,stat):
 		return rollDice(6)+c.getDamageModifier(stat)
@@ -136,14 +154,14 @@ class character:
 		elif c.job == "cleric": return clericSpells[c.getLevel()];
 		
 	def logCharacter(c):
-		print("Level " + str(c.getLevel()) + " " + str(c.getJob()) + " (" + str(c.getExperience()) + "XP)")
-		print(str(c.getHitDice()) + " Hit Dice, Hit Points: " + str(c.getHPLeft()) + "/" + str(c.getHitPoints()))
-		print("Melee attack: 1d20" + '%+d' % c.getAttackModifier(STR) + " >AC--> 1d6"+'%+d' % c.getDamageModifier(STR)+" damage")
-		print("Ranged attack: 1d20" + '%+d' % c.getAttackModifier(DEX) + " >AC--> 1d6"+'%+d' % c.getDamageModifier(DEX)+" damage")
-		print("Armor Class: " + str(c.getArmor()))
-		print("Spells per day: " + str(c.getSpells()) )
-		print("STR: " + str(c.getStats()[STR]) + ", CON: " + str(c.getStats()[CON]) + ", DEX: " + str(c.getStats()[DEX]))
-		print("INT: " + str(c.getStats()[INT]) + ", WIS: " + str(c.getStats()[WIS]) + ", CHA: " + str(c.getStats()[CHA]))
+		print("Level {} {} ({} XP)".format(c.getLevel(), c.getJob(), c.getExperience()))
+		print("{} Hit Dice, Hit Points: {}/{}".format(c.getHitDice(), c.getHPLeft(), c.getHitPoints()))
+		print("Melee attack: 1d20{} >AC--> 1d6{} damage".format('%+d' % c.getAttackModifier(c.stats.STR), '%+d' % c.getDamageModifier(c.stats.STR)))
+		print("Ranged attack: 1d20{} >AC--> 1d6{} damage".format('%+d' % c.getAttackModifier(c.stats.DEX), '%+d' % c.getDamageModifier(c.stats.DEX)))
+		print("Armor Class: {}".format(c.getArmor()))
+		print("Spells per day: {}".format(c.getSpells()))
+		print("STR: {}, CON: {}, DEX: {}".format(c.stats.STR, c.stats.CON, c.stats.DEX))
+		print("INT: {}, WIS: {}, CHA: {}".format(c.stats.INT, c.stats.WIS, c.stats.CHA))
 
 #c = character("cleric")
 #c.setExperience(500)
